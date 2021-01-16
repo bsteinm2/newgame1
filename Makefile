@@ -1,14 +1,18 @@
 #OBJS specifies which files to compile as part of the project
-OBJS = main.c startup_utils.h
-
+OBJS = main.o startup_utils.o
+IDIR =/include
 OBJS_DIR = .objs
+CC = clang
 
-#CC specifies which compiler we're using
-CC = g++
+_DEPS = startup_utils.h
+DEPENDENCIES = $(game %,$(IDIR)/%,$(_DEPS))
 
+$(OBJS_DIR)/%.o: %.c $(DEPS)
+	$(CC) -c -o $@ $< $(CFLAGS_COMMON)
 #COMPILER_FLAGS specifies the additional compilation options we're using
 # -w suppresses all warnings
-COMPILER_FLAGS = -w
+CFLAGS_COMMON = -w
+CFLAGS_DEBUG = $(CFLAGS_COMMON) -O0 -g -DDEBUG
 
 #LINKER_FLAGS specifies the libraries we're linking against
 LINKER_FLAGS = -lSDL2
@@ -16,10 +20,16 @@ LINKER_FLAGS = -lSDL2
 # executable(s)
 EXES = a
 
-#This is the target that compiles our executable
-all : $(OBJS)
-	$(CC) $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJ_NAME)
+
+# first target is the one that gets run if just "make" is called
+#$(CC) $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJS)
+all: $(OBJS)
+	$(CC) -o $(EXES) $^ $(CFLAGS_COMMON) $(LINKER_FLAGS)
+
+#$(CC) $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJS)
+debug: $(OBJS)
+	$(CC) -o $(EXES) $^ $(CFLAGS_DEBUG) $(LINKER_FLAGS)
 
 .PHONY: clean
 clean:
-	rm -rf .objs $(EXES)
+	rm -rf $(OBJS_DIR)/*.o $(EXES) *.o
