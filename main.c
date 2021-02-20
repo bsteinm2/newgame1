@@ -10,12 +10,22 @@
     #define PLATFORM "Is not linux or windows"
 #endif
 
+SDL_Surface * pic = NULL;
 
+int load_picture() {
+	pic = SDL_LoadBMP("IMG-1180.bmp");
+	if (pic == NULL) {
+		printf("failed load image");
+		return -1;
+	}
+	return 1;
+}
 
 int main(int argc, char *argv[]) {
     puts(PLATFORM);
 
 	if (initSDL() < 0) {
+		printf("initSDL failed");
 		return -1;
 	}
 
@@ -28,6 +38,11 @@ int main(int argc, char *argv[]) {
 	//Wait two seconds
 	SDL_Delay( 2000 );
 	
+	if (load_picture() == 1) {
+		SDL_BlitSurface(pic, NULL, window_surface, NULL);
+		SDL_UpdateWindowSurface(window);
+		SDL_Delay( 2000 );
+	}
 
 	//Destroy window
 	SDL_DestroyWindow( window );
