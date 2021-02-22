@@ -34,14 +34,21 @@ int main(int argc, char *argv[]) {
 	
 	//Update the surface
 	SDL_UpdateWindowSurface( window );
-
-	//Wait two seconds
-	SDL_Delay( 2000 );
 	
 	if (load_picture() == 1) {
 		SDL_BlitSurface(pic, NULL, window_surface, NULL);
 		SDL_UpdateWindowSurface(window);
-		SDL_Delay( 2000 );
+	}
+
+	int quit = 0;
+	SDL_Event ev;
+	while (quit == 0) {
+		while(SDL_PollEvent(&ev) != 0) {
+			// SDL_QUIT is the user hitting the x button on the game window
+			if (ev.type == SDL_QUIT) {
+				quit = 1;
+			}
+		}
 	}
 
 	//Destroy window

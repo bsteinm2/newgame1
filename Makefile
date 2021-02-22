@@ -15,7 +15,7 @@ CFLAGS_COMMON = -w
 CFLAGS_DEBUG = $(CFLAGS_COMMON) -O0 -g -DDEBUG
 
 #LINKER_FLAGS specifies the libraries we're linking against
-LINKER_FLAGS = -lSDL2
+LINKER_FLAGS = -lSDL2 -lSDL2_ttf
 
 # executable(s)
 EXES = a
