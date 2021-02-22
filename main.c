@@ -21,6 +21,24 @@ int load_picture() {
 	return 1;
 }
 
+void get_text_and_rect(SDL_Renderer *renderer, int x, int y, char *text,
+        TTF_Font *font, SDL_Texture **texture, SDL_Rect *rect) {
+    int text_width;
+    int text_height;
+    SDL_Surface *surface;
+    SDL_Color textColor = {255, 255, 255, 0};
+
+    surface = TTF_RenderText_Solid(font, text, textColor);
+    *texture = SDL_CreateTextureFromSurface(renderer, surface);
+    text_width = surface->w;
+    text_height = surface->h;
+    SDL_FreeSurface(surface);
+    rect->x = x;
+    rect->y = y;
+    rect->w = text_width;
+    rect->h = text_height;
+}
+
 int main(int argc, char *argv[]) {
     puts(PLATFORM);
 
@@ -35,10 +53,16 @@ int main(int argc, char *argv[]) {
 	//Update the surface
 	SDL_UpdateWindowSurface( window );
 	
-	if (load_picture() == 1) {
-		SDL_BlitSurface(pic, NULL, window_surface, NULL);
-		SDL_UpdateWindowSurface(window);
-	}
+	// if (load_picture() == 1) {
+	// 	SDL_BlitSurface(pic, NULL, window_surface, NULL);
+	// 	SDL_UpdateWindowSurface(window);
+	// }
+
+	SDL_Rect rect1, rect2;
+    SDL_Renderer *renderer;
+    SDL_Texture *texture1, *texture2;
+	get_text_and_rect(renderer, 0, 0, "hello", font, &texture1, &rect1);
+    get_text_and_rect(renderer, 0, rect1.y + rect1.h, "world", font, &texture2, &rect2);
 
 	int quit = 0;
 	SDL_Event ev;
@@ -49,10 +73,25 @@ int main(int argc, char *argv[]) {
 				quit = 1;
 			}
 		}
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+        SDL_RenderClear(renderer);
+
+        /* Use TTF textures. */
+        SDL_RenderCopy(renderer, texture1, NULL, &rect1);
+        SDL_RenderCopy(renderer, texture2, NULL, &rect2);
+
+        SDL_RenderPresent(renderer);
+
 	}
 
-	//Destroy window
-	SDL_DestroyWindow( window );
+
+	// TODO: destroy textures
+	TTF_Quit();
+	SDL_DestroyTexture(texture1);
+    SDL_DestroyTexture(texture2);
+
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
 
 	//Quit SDL subsystems
 	SDL_Quit();

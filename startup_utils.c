@@ -8,6 +8,8 @@
 //#include <SDL2/SDL.h>
 
 //SDL_DisplayMode DM;
+const char * font_path = "UbuntuMono-Regular.ttf";
+
 
 
 int initSDL() {
@@ -47,8 +49,13 @@ int initSDL() {
                 SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
                 
                 if(TTF_Init() == -1) {
-                    printf("ttf init fail\n");
-                    //printf("%s\n", TTF_GetError());
+                    //printf("ttf init fail\n");
+                    printf("%s\n", TTF_GetError());
+                }
+                font = TTF_OpenFont(font_path, 24);
+                if (font == NULL) {
+                    fprintf(stderr, "error: font not found\n");
+                    exit(EXIT_FAILURE);
                 }
             }
             window_surface = SDL_GetWindowSurface(window);
